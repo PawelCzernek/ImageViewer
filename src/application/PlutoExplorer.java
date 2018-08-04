@@ -1,3 +1,4 @@
+import application.PixelatedImageView;
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -24,7 +25,7 @@ import java.io.FileNotFoundException;
 public class PlutoExplorer extends Application {
 
     private static final int MIN_PIXELS = 50;
-    private static final String FILEPATH = "/Users/paltho/Pictures/Shannon/shannon.jpg";
+    private static final String FILEPATH = "/Users/paltho/Pictures/Shannon/shannon_reduced.png";
 
     double width;
     double height;
@@ -42,7 +43,7 @@ public class PlutoExplorer extends Application {
         height = image.getHeight();
 
 
-        ImageView imageView = new ImageView(image);
+        ImageView imageView = new PixelatedImageView(image);
         imageView.setPreserveRatio(true);
         imageView.setSmooth(false);
         reset(imageView);

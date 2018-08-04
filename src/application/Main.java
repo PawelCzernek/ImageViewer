@@ -39,7 +39,7 @@ public class Main extends Application {
 
 
         //odczytanie pliku
-        String filepath = "/Users/paltho/Pictures/Shannon/shannon.jpg";
+        String filepath = "/Users/paltho/Pictures/Shannon/shannon_small.jpg";
         try {
             image = ImageIO.read(new File(filepath));
         } catch (IOException e) {
@@ -51,9 +51,9 @@ public class Main extends Application {
 
 
         //zapis pliku
-        String outputPathA = "/Users/paltho/Pictures/Shannon/shannon_reduced.jpg";
+        String outputPathA = "/Users/paltho/Pictures/Shannon/shannon_reduced.png";
         try {
-            ImageIO.write(limitedPaletteImage, "jpg", new File(outputPathA));
+            ImageIO.write(limitedPaletteImage, "png", new File(outputPathA));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -97,6 +97,11 @@ public class Main extends Application {
                 } catch (FileNotFoundException e){
 
             e.printStackTrace();
+        }
+        if(!colorList.isEmpty()){
+            colorList.sort((o1,o2) -> (o2.getBlue()-o1.getBlue()));
+            colorList.sort((o1,o2) -> (o2.getGreen()-o1.getGreen()));
+            colorList.sort((o1,o2) -> (o2.getRed()-o1.getRed()));
         }
         Color[] result = colorList.toArray(new Color[colorList.size()]);
 
