@@ -30,7 +30,6 @@ public class Main extends Application {
     public static void main(String[] args) {
 
         BufferedImage image = null;
-        BufferedImage imageCopy;
         BufferedImage limitedPaletteImage;
 
         Color[] munsellColors = initMunsellColors();
@@ -45,8 +44,7 @@ public class Main extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        imageCopy = deepCopy(image);
-        limitedPaletteImage = limitPallette(imageCopy, munsellColors);
+        limitedPaletteImage = limitPallette(image, munsellColors);
 
 
 
@@ -60,7 +58,7 @@ public class Main extends Application {
     }
 
     private static Color[] initMunsellColors() {
-        List<Color> colorList = new ArrayList<Color>();
+        List<Color> colorList = new ArrayList<>();
 
         // -define .csv file in app
         String fileNameDefined = "/Users/paltho/Documents/real_sRGB/data-Table.csv";
@@ -109,7 +107,8 @@ public class Main extends Application {
     }
 
 
-    private static BufferedImage limitPallette(BufferedImage image, Color[] munsellColors) {
+    private static BufferedImage limitPallette(BufferedImage source, Color[] munsellColors) {
+        BufferedImage image = deepCopy(source);
         ColorFinder colorFinder = new ColorFinder(munsellColors);
         Color currentRgbColor;
         for(int h = 0; h < image.getHeight(); ++h) {

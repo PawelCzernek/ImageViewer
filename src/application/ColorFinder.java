@@ -16,7 +16,7 @@ public class ColorFinder {
     }
 
     public int GetNearestColorIndex(Color color) {
-        int iTmp = 0;
+        Integer iTmp = 0;
         return _nodRoot.GetNearestColorIndex(color, iTmp);
     }
 
@@ -64,7 +64,7 @@ public class ColorFinder {
             }
         }
 
-        public int GetNearestColorIndex(Color color, int distance) {
+        public int GetNearestColorIndex(Color color, Integer distance) {
             int ret = -1;
             if(_iLevel == 7) {
                 // LEAF MODE.
@@ -86,7 +86,7 @@ public class ColorFinder {
                     for(Node nod : _anodChildren) {
                         if(nod != null) {
                             // Get the closeset color contained in the child node and its distance.
-                            int iDistance_nod = 0;
+                            Integer iDistance_nod = 0;
                             int iColor_nod = nod.GetNearestColorIndex(color, iDistance_nod);
                             // If the return color the closest color found, remember it.
                             if(iDistance_nod < iMinDistance) {
