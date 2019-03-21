@@ -5,72 +5,77 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.*;
+import java.util.List;
 
 /**
  * Created by paltho on 19/01/2019.
  */
 public class ColorSplitter {
 
-    private static BufferedImage image = null;
-    private static BufferedImage currentLayer;
-
     public static void main(String[] args) {
+
+        BufferedImage image = null;
+        BufferedImage podkladCzysty = null;
+        BufferedImage currentLayer = null;
+        List<Color> colorList = new ArrayList<>();
+        List<Color> uniqueColorList = new ArrayList<>();
+        int layerCouner = 1;
 
         int width;
         int height;
 
         //odczytanie pliku
-        String filepath = "/Users/paltho/Pictures/Shannon/shannon_colors.png";
+        String filepath = "/Users/paltho/Pictures/Shannon/kolory_01.png";
         try {
             image = ImageIO.read(new File(filepath));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        int colorCounter = 0;
-        int layerCounter = 0;
-        Color tempColor = null;
+        filepath = "/Users/paltho/Pictures/Shannon/podklad_01.png";
+        try {
+            podkladCzysty = ImageIO.read(new File(filepath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         width = image.getWidth();
         height = image.getHeight();
 
-        for(int i=0; i<height; i++) {
-            for(int j=0; j<width; j++) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 Color localColor = new Color(image.getRGB(j, i));
-                if(!localColor.equals(Color.WHITE)){
-                    colorCounter++;
-                    tempColor = localColor;
-                    break;
+                if (!localColor.equals(Color.WHITE) && !uniqueColorList.contains(localColor)) {
+                    uniqueColorList.add(localColor);
                 }
-
             }
         }
-        if(layerCounter == 0) {
-            ++layerCounter;
-            currentLayer = new BufferedImage(width, height, image.getType());
-            for(int h=1; h<height -1; ++h) {
-                for(int w=1; w<width -1; ++w) {
-                    Color localColor = new Color(image.getRGB(w, h));
-                    if(localColor.equals(tempColor)){
-                        currentLayer.setRGB(w, h, tempColor.getRGB());
-                        image.setRGB(w, h, Color.WHITE.getRGB());
-                    } else {
-                        currentLayer.setRGB(w, h, Color.WHITE.getRGB());
+        Map<Color, Long> colorMap = new HashMap<>();
+
+        for (Color aColor : uniqueColorList) {
+            long occurance = 0;
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    Color localColor = new Color(image.getRGB(j, i));
+                    if (localColor.equals(aColor)) {
+                        ++occurance;
                     }
-
                 }
             }
-            saveImage(currentLayer, layerCounter);
-            tempColor = null;
-        } else {
-
-
+            colorMap.put(aColor, occurance);
+            System.out.println(aColor.toString());
         }
+        List<Map.Entry<Color, Long>> list = new ArrayList<>(colorMap.entrySet());
+        list.sort(Map.Entry.comparingByValue());
 
-
-
-
-
+        Map<Color, Long> result = new LinkedHashMap<>();
+        for (Map.Entry<Color, Long> entry : list) {
+            result.put(entry.getKey(), entry.getValue());
+        }
+        List<Color> colorListSorted = new ArrayList<>();
+        colorListSorted.addAll(result.keySet()); // to do odwrócenia kollejności!
+        System.out.println("");
     }
 
     private static void saveImage(BufferedImage currentLayer, int layerCouner) {

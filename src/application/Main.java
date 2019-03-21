@@ -38,7 +38,7 @@ public class Main extends Application {
 
 
         //odczytanie pliku
-        String filepath = "/Users/paltho/Pictures/Shannon/shannon_small.jpg";
+        String filepath = "/Users/paltho/Pictures/Shannon/shannon_small.png";
         try {
             image = ImageIO.read(new File(filepath));
         } catch (IOException e) {
@@ -61,7 +61,7 @@ public class Main extends Application {
         List<Color> colorList = new ArrayList<>();
 
         // -define .csv file in app
-        String fileNameDefined = "/Users/paltho/Documents/real_sRGB/data-Table.csv";
+        String fileNameDefined = "/Users/paltho/Pictures/Munsell/real_sRGB/munsell_gimp_palette.csv";
         // -File class needed to turn stringName to actual file
         File file = new File(fileNameDefined);
 
@@ -86,9 +86,9 @@ public class Main extends Application {
                 value = line[1];
                 chroma = line[2];
 
-                red = Integer.valueOf(line[6]);
-                green = Integer.valueOf(line[7]);
-                blue = Integer.valueOf(line[8]);
+                red = Integer.valueOf(line[3]);
+                green = Integer.valueOf(line[4]);
+                blue = Integer.valueOf(line[5]);
 
                 colorList.add(new Color(red, green, blue));
             }
