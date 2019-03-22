@@ -13,12 +13,18 @@ import java.util.List;
  */
 public class ColorSplitter {
 
+    private static int radius = 10;
+    private static final String FILE_PATH = "D:\\80_Obrazy\\Shannon_Jungle_Tales\\indexed_01.png";
+    private static final String PODKLAD_PATH = "D:\\80_Obrazy\\Shannon_Jungle_Tales\\podklad.png";
+    private static final String DESTINATION_PATH = "D:\\80_Obrazy\\Shannon_Jungle_Tales\\wynik\\";
+    private static final String FILE_PREFIX = "indexed_01_";
+    private static final String FILE_EXT = ".png";
+
     public static void main(String[] args) {
 
         BufferedImage image = null;
         BufferedImage podkladCzysty = null;
         BufferedImage currentLayer = null;
-        List<Color> colorList = new ArrayList<>();
         List<Color> uniqueColorList = new ArrayList<>();
         int layerCouner = 1;
 
@@ -26,14 +32,14 @@ public class ColorSplitter {
         int height;
 
         //odczytanie pliku
-        String filepath = "/Users/paltho/Pictures/Shannon/kolory_01.png";
+        String filepath = FILE_PATH;
         try {
             image = ImageIO.read(new File(filepath));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        filepath = "/Users/paltho/Pictures/Shannon/podklad_01.png";
+        filepath = PODKLAD_PATH;
         try {
             podkladCzysty = ImageIO.read(new File(filepath));
         } catch (IOException e) {
@@ -74,15 +80,76 @@ public class ColorSplitter {
             result.put(entry.getKey(), entry.getValue());
         }
         List<Color> colorListSorted = new ArrayList<>();
-        colorListSorted.addAll(result.keySet()); // to do odwrócenia kollejności!
-        System.out.println("");
+        colorListSorted.addAll(result.keySet());
+        Collections.reverse(colorListSorted);
+        List<Color> colorsToRemove = new ArrayList<>();
+        while (!colorListSorted.isEmpty()) {
+            currentLayer = deepCopy(podkladCzysty);
+            colorsToRemove.clear();
+
+            for (Color aColor : colorListSorted) {
+                if (canInsertColor(aColor, image, currentLayer, radius)) {
+                    colorsToRemove.add(aColor);
+                    for (int h = 0; h < height; h++) {
+                        for (int w = 0; w < width; w++) {
+                            Color localColor = new Color(image.getRGB(w, h));
+                            if (aColor.equals(localColor)) {
+                                currentLayer.setRGB(w, h, localColor.getRGB());
+                            }
+                        }
+                    }
+                }
+            }
+            saveImage(currentLayer, layerCouner);
+            System.out.println("Created stencil " + layerCouner);
+            layerCouner++;
+            colorListSorted.removeAll(colorsToRemove);
+        }
+    }
+
+    private static boolean canInsertColor(Color aColor, BufferedImage image, BufferedImage currentLayer, int radius) {
+        for (int h = 0; h < image.getHeight(); h++) {
+            for (int w = 0; w < image.getWidth(); w++) {
+                Color localColor = new Color(image.getRGB(w, h));
+                if (aColor.equals(localColor)) {
+                    for (int h1 = h - radius; h1 < h + radius; h1++) {
+                      for (int w1 = w - radius; w1 < w + radius; w1++) {
+                          if (currentLayer.getRGB(roundW1(w1, currentLayer), roundH1(h1, currentLayer)) != Color.WHITE.getRGB()) {
+                              return false;
+                          }
+                      }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private static int roundH1(int h1, BufferedImage image) {
+        if (h1 <= 0) {
+            return 0;
+        } else if (h1 >= (image.getHeight() - 1)) {
+            return image.getHeight() - 1;
+        } else {
+            return h1;
+        }
+    }
+
+    private static int roundW1(int w1, BufferedImage image) {
+        if (w1 <= 0) {
+            return 0;
+        } else if (w1 >= (image.getWidth() - 1)) {
+            return image.getWidth() - 1;
+        } else {
+            return w1;
+        }
     }
 
     private static void saveImage(BufferedImage currentLayer, int layerCouner) {
         //zapis pliku
-        String outputPathA = "/Users/paltho/Pictures/Shannon/layers/shannon_reduced" + layerCouner + ".png";
+        String outputPath = DESTINATION_PATH + FILE_PREFIX + layerCouner + FILE_EXT;
         try {
-            ImageIO.write(currentLayer, "png", new File(outputPathA));
+            ImageIO.write(currentLayer, "png", new File(outputPath));
         } catch (IOException e) {
             e.printStackTrace();
         }
