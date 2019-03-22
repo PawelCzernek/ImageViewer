@@ -20,7 +20,7 @@ public class ColorRemover {
     public static void main(String[] args) {
 
         //odczytanie pliku
-        String filepath = "/Users/paltho/Pictures/Shannon/shannon_indexed_color.png";
+        String filepath = "D:\\80_Obrazy\\Shannon_Jungle_Tales\\indexed_01.png";
         try {
             image = ImageIO.read(new File(filepath));
         } catch (IOException e) {
@@ -28,12 +28,12 @@ public class ColorRemover {
         }
         BufferedImage resultImage = image;
 
-        for (int i = 1; i < 3; i++) {
+        for (int i = 1; i < 2; i++) {
             System.out.println("Przebieg: " + i);
-            resultImage = removeColors(resultImage, 20);
+            resultImage = removeColors(resultImage, 25);
         }
 
-        String outputpath = "/Users/paltho/Pictures/Shannon/shannon_colors_reduced.png";
+        String outputpath = "D:\\80_Obrazy\\Shannon_Jungle_Tales\\indexed_01_reduced.png";
         try {
             ImageIO.write(resultImage, "png", new File(outputpath));
         } catch (IOException e) {

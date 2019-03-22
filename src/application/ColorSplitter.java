@@ -14,7 +14,8 @@ import java.util.List;
 public class ColorSplitter {
 
     private static int radius = 10;
-    private static final String FILE_PATH = "D:\\80_Obrazy\\Shannon_Jungle_Tales\\indexed_01.png";
+    private static int pixel_limit = 100;
+    private static final String FILE_PATH = "D:\\80_Obrazy\\Shannon_Jungle_Tales\\indexed_01_reduced.png";
     private static final String PODKLAD_PATH = "D:\\80_Obrazy\\Shannon_Jungle_Tales\\podklad.png";
     private static final String DESTINATION_PATH = "D:\\80_Obrazy\\Shannon_Jungle_Tales\\wynik\\";
     private static final String FILE_PREFIX = "indexed_01_";
@@ -77,7 +78,9 @@ public class ColorSplitter {
 
         Map<Color, Long> result = new LinkedHashMap<>();
         for (Map.Entry<Color, Long> entry : list) {
-            result.put(entry.getKey(), entry.getValue());
+            if ( entry.getValue() > pixel_limit) {
+                result.put(entry.getKey(), entry.getValue());
+            }
         }
         List<Color> colorListSorted = new ArrayList<>();
         colorListSorted.addAll(result.keySet());
