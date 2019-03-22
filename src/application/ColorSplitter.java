@@ -13,100 +13,103 @@ import java.util.List;
  */
 public class ColorSplitter {
 
-    private static int radius = 10;
-    private static int pixel_limit = 100;
-    private static final String FILE_PATH = "D:\\80_Obrazy\\Shannon_Jungle_Tales\\indexed_01_reduced.png";
-    private static final String PODKLAD_PATH = "D:\\80_Obrazy\\Shannon_Jungle_Tales\\podklad.png";
-    private static final String DESTINATION_PATH = "D:\\80_Obrazy\\Shannon_Jungle_Tales\\wynik\\";
-    private static final String FILE_PREFIX = "indexed_01_";
-    private static final String FILE_EXT = ".png";
 
     public static void main(String[] args) {
 
-        BufferedImage image = null;
-        BufferedImage podkladCzysty = null;
-        BufferedImage currentLayer = null;
-        List<Color> uniqueColorList = new ArrayList<>();
-        int layerCouner = 1;
+        for (int part = 5 ; part < 9 ; part ++) {
+            int radius = 10;
+            int pixel_limit = 50;
+            final String FILE_PATH = "/Users/paltho/Pictures/Shannon/layers/col_0" + part + ".png";
+            final String PODKLAD_PATH = "/Users/paltho/Pictures/Shannon/layers/podkl_0" + part + ".png";
+            final String DESTINATION_PATH = "/Users/paltho/Pictures/Shannon/layers/0" + part + "/";
+            final String FILE_PREFIX = "indexed_0" + part + "_layer";
+            final String FILE_EXT = ".png";
 
-        int width;
-        int height;
+            BufferedImage image = null;
+            BufferedImage podkladCzysty = null;
+            BufferedImage currentLayer = null;
+            List<Color> uniqueColorList = new ArrayList<>();
+            int layerCouner = 1;
 
-        //odczytanie pliku
-        String filepath = FILE_PATH;
-        try {
-            image = ImageIO.read(new File(filepath));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            int width;
+            int height;
 
-        filepath = PODKLAD_PATH;
-        try {
-            podkladCzysty = ImageIO.read(new File(filepath));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        width = image.getWidth();
-        height = image.getHeight();
-
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                Color localColor = new Color(image.getRGB(j, i));
-                if (!localColor.equals(Color.WHITE) && !uniqueColorList.contains(localColor)) {
-                    uniqueColorList.add(localColor);
-                }
+            //odczytanie pliku
+            String filepath = FILE_PATH;
+            try {
+                image = ImageIO.read(new File(filepath));
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        }
-        Map<Color, Long> colorMap = new HashMap<>();
 
-        for (Color aColor : uniqueColorList) {
-            long occurance = 0;
+            filepath = PODKLAD_PATH;
+            try {
+                podkladCzysty = ImageIO.read(new File(filepath));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            width = image.getWidth();
+            height = image.getHeight();
+
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
                     Color localColor = new Color(image.getRGB(j, i));
-                    if (localColor.equals(aColor)) {
-                        ++occurance;
+                    if (!localColor.equals(Color.WHITE) && !uniqueColorList.contains(localColor)) {
+                        uniqueColorList.add(localColor);
                     }
                 }
             }
-            colorMap.put(aColor, occurance);
-            System.out.println(aColor.toString());
-        }
-        List<Map.Entry<Color, Long>> list = new ArrayList<>(colorMap.entrySet());
-        list.sort(Map.Entry.comparingByValue());
+            Map<Color, Long> colorMap = new HashMap<>();
 
-        Map<Color, Long> result = new LinkedHashMap<>();
-        for (Map.Entry<Color, Long> entry : list) {
-            if ( entry.getValue() > pixel_limit) {
-                result.put(entry.getKey(), entry.getValue());
+            for (Color aColor : uniqueColorList) {
+                long occurance = 0;
+                for (int i = 0; i < height; i++) {
+                    for (int j = 0; j < width; j++) {
+                        Color localColor = new Color(image.getRGB(j, i));
+                        if (localColor.equals(aColor)) {
+                            ++occurance;
+                        }
+                    }
+                }
+                colorMap.put(aColor, occurance);
+                System.out.println(aColor.toString());
             }
-        }
-        List<Color> colorListSorted = new ArrayList<>();
-        colorListSorted.addAll(result.keySet());
-        Collections.reverse(colorListSorted);
-        List<Color> colorsToRemove = new ArrayList<>();
-        while (!colorListSorted.isEmpty()) {
-            currentLayer = deepCopy(podkladCzysty);
-            colorsToRemove.clear();
+            List<Map.Entry<Color, Long>> list = new ArrayList<>(colorMap.entrySet());
+            list.sort(Map.Entry.comparingByValue());
 
-            for (Color aColor : colorListSorted) {
-                if (canInsertColor(aColor, image, currentLayer, radius)) {
-                    colorsToRemove.add(aColor);
-                    for (int h = 0; h < height; h++) {
-                        for (int w = 0; w < width; w++) {
-                            Color localColor = new Color(image.getRGB(w, h));
-                            if (aColor.equals(localColor)) {
-                                currentLayer.setRGB(w, h, localColor.getRGB());
+            Map<Color, Long> result = new LinkedHashMap<>();
+            for (Map.Entry<Color, Long> entry : list) {
+                if (entry.getValue() > pixel_limit) {
+                    result.put(entry.getKey(), entry.getValue());
+                }
+            }
+            List<Color> colorListSorted = new ArrayList<>();
+            colorListSorted.addAll(result.keySet());
+            Collections.reverse(colorListSorted);
+            List<Color> colorsToRemove = new ArrayList<>();
+            while (!colorListSorted.isEmpty()) {
+                currentLayer = deepCopy(podkladCzysty);
+                colorsToRemove.clear();
+
+                for (Color aColor : colorListSorted) {
+                    if (canInsertColor(aColor, image, currentLayer, radius)) {
+                        colorsToRemove.add(aColor);
+                        for (int h = 0; h < height; h++) {
+                            for (int w = 0; w < width; w++) {
+                                Color localColor = new Color(image.getRGB(w, h));
+                                if (aColor.equals(localColor)) {
+                                    currentLayer.setRGB(w, h, localColor.getRGB());
+                                }
                             }
                         }
                     }
                 }
+                saveImage(currentLayer, layerCouner, DESTINATION_PATH, FILE_PREFIX, FILE_EXT);
+                System.out.println("Created stencil " + layerCouner);
+                layerCouner++;
+                colorListSorted.removeAll(colorsToRemove);
             }
-            saveImage(currentLayer, layerCouner);
-            System.out.println("Created stencil " + layerCouner);
-            layerCouner++;
-            colorListSorted.removeAll(colorsToRemove);
         }
     }
 
@@ -148,7 +151,7 @@ public class ColorSplitter {
         }
     }
 
-    private static void saveImage(BufferedImage currentLayer, int layerCouner) {
+    private static void saveImage(BufferedImage currentLayer, int layerCouner, String DESTINATION_PATH, String FILE_PREFIX, String FILE_EXT) {
         //zapis pliku
         String outputPath = DESTINATION_PATH + FILE_PREFIX + layerCouner + FILE_EXT;
         try {
