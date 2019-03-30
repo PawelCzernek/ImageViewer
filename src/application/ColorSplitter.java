@@ -20,14 +20,16 @@ public class ColorSplitter {
 
         StringBuilder notations = new StringBuilder("Munsell notations: \r\n");
         Map<Color, String> munsellNotations = initMunsellNotations();
+        Map<Color, String> munsellPremixed = initMunsellPremixed();
 
-        for (int part = 1 ; part < 2 ; part ++) {
+        for (int part = 1 ; part < 9 ; part ++) {
             notations.append("Part 0" + part + "\r\n");
             int radius = 10;
             int pixel_limit = 50;
             final String FILE_PATH = "/Users/paltho/Pictures/Shannon/layers/col_0" + part + ".png";
             final String PODKLAD_PATH = "/Users/paltho/Pictures/Shannon/layers/podkl_0" + part + ".png";
-            final String DESTINATION_PATH = "/Users/paltho/Pictures/Shannon/layers/0" + part + "/";
+            final String DESTINATION_FOLDER = "/Users/paltho/Pictures/Shannon/layers/0" + part;
+            final String DESTINATION_PATH = DESTINATION_FOLDER + "/";
             final String FILE_PREFIX = "indexed_0" + part + "_layer";
             final String FILE_EXT = ".png";
 
@@ -111,6 +113,7 @@ public class ColorSplitter {
                         }
                     }
                 }
+                new File(DESTINATION_FOLDER).mkdirs();
                 saveImage(currentLayer, layerCouner, DESTINATION_PATH, FILE_PREFIX, FILE_EXT);
                 System.out.println("Created stencil " + layerCouner);
 
@@ -119,9 +122,11 @@ public class ColorSplitter {
                 notations.append("layer : "+ layerCouner + "\r\n");
                 int colorCounter = 1;
                 for (Color aColor : colorsToRemove) {
-                    notations.append(colorCounter + ": " + munsellNotations.get(aColor) + "\r\n");
+                    boolean premixed = munsellPremixed.containsKey(aColor);
+                    notations.append(colorCounter + ": " + munsellNotations.get(aColor) + (premixed ? "" : " *") + "\r\n");
                     colorCounter++;
                 }
+                notations.append("\r\n");
                 layerCouner++;
             }
         }
@@ -139,6 +144,48 @@ public class ColorSplitter {
         Map<Color,String> result = new HashMap<>();
         // -define .csv file in app
         String fileNameDefined = "/Users/paltho/Pictures/Munsell/real_sRGB/munsell_gimp_palette.csv";
+        // -File class needed to turn stringName to actual file
+        File file = new File(fileNameDefined);
+
+        try{
+            // -read from filePooped with Scanner class
+            Scanner inputStream = new Scanner(file);
+            // hashNext() loops line-by-line
+            int licznik = 1;
+            while(inputStream.hasNextLine()) {
+                //read single line, put in string
+                String dataLine = inputStream.nextLine();
+
+                String hue;
+                String value;
+                String chroma;
+                int red;
+                int green;
+                int blue;
+
+                String[] line = dataLine.split(",");
+                hue = line[0];
+                value = line[1];
+                chroma = line[2];
+
+                red = Integer.valueOf(line[3]);
+                green = Integer.valueOf(line[4]);
+                blue = Integer.valueOf(line[5]);
+
+                result.put(new Color(red, green, blue), hue + value + "/" + chroma);
+            }
+        } catch (FileNotFoundException e) {
+
+            e.printStackTrace();
+
+        }
+        return result;
+    }
+
+    private static Map<Color,String> initMunsellPremixed() {
+        Map<Color,String> result = new HashMap<>();
+        // -define .csv file in app
+        String fileNameDefined = "/Users/paltho/Pictures/Munsell/real_sRGB/munsell_gimp_palette_done.csv";
         // -File class needed to turn stringName to actual file
         File file = new File(fileNameDefined);
 
