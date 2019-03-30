@@ -4,6 +4,8 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -16,7 +18,11 @@ public class ColorSplitter {
 
     public static void main(String[] args) {
 
-        for (int part = 5 ; part < 9 ; part ++) {
+        StringBuilder notations = new StringBuilder("Munsell notations: \r\n");
+        Map<Color, String> munsellNotations = initMunsellNotations();
+
+        for (int part = 1 ; part < 2 ; part ++) {
+            notations.append("Part 0" + part + "\r\n");
             int radius = 10;
             int pixel_limit = 50;
             final String FILE_PATH = "/Users/paltho/Pictures/Shannon/layers/col_0" + part + ".png";
@@ -27,7 +33,7 @@ public class ColorSplitter {
 
             BufferedImage image = null;
             BufferedImage podkladCzysty = null;
-            BufferedImage currentLayer = null;
+            BufferedImage currentLayer;
             List<Color> uniqueColorList = new ArrayList<>();
             int layerCouner = 1;
 
@@ -107,10 +113,68 @@ public class ColorSplitter {
                 }
                 saveImage(currentLayer, layerCouner, DESTINATION_PATH, FILE_PREFIX, FILE_EXT);
                 System.out.println("Created stencil " + layerCouner);
-                layerCouner++;
+
                 colorListSorted.removeAll(colorsToRemove);
+                //saving notations
+                notations.append("layer : "+ layerCouner + "\r\n");
+                int colorCounter = 1;
+                for (Color aColor : colorsToRemove) {
+                    notations.append(colorCounter + ": " + munsellNotations.get(aColor) + "\r\n");
+                    colorCounter++;
+                }
+                layerCouner++;
             }
         }
+
+        try {
+            FileWriter writer = new FileWriter("/Users/paltho/Pictures/Shannon/layers/munsell_notations.csv");
+            writer.write(notations.toString());
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static Map<Color,String> initMunsellNotations() {
+        Map<Color,String> result = new HashMap<>();
+        // -define .csv file in app
+        String fileNameDefined = "/Users/paltho/Pictures/Munsell/real_sRGB/munsell_gimp_palette.csv";
+        // -File class needed to turn stringName to actual file
+        File file = new File(fileNameDefined);
+
+        try{
+            // -read from filePooped with Scanner class
+            Scanner inputStream = new Scanner(file);
+            // hashNext() loops line-by-line
+            int licznik = 1;
+            while(inputStream.hasNextLine()) {
+                //read single line, put in string
+                String dataLine = inputStream.nextLine();
+
+                String hue;
+                String value;
+                String chroma;
+                int red;
+                int green;
+                int blue;
+
+                String[] line = dataLine.split(",");
+                hue = line[0];
+                value = line[1];
+                chroma = line[2];
+
+                red = Integer.valueOf(line[3]);
+                green = Integer.valueOf(line[4]);
+                blue = Integer.valueOf(line[5]);
+
+                result.put(new Color(red, green, blue), hue + value + "/" + chroma);
+            }
+        } catch (FileNotFoundException e) {
+
+            e.printStackTrace();
+
+        }
+        return result;
     }
 
     private static boolean canInsertColor(Color aColor, BufferedImage image, BufferedImage currentLayer, int radius) {
