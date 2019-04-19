@@ -20,7 +20,7 @@ public class ColorRemover {
     public static void main(String[] args) {
 
         //odczytanie pliku
-        String filepath = "D:\\80_Obrazy\\Shannon_Jungle_Tales\\indexed_01.png";
+        String filepath = "/Users/paltho/Pictures/Shannon/shannon_indexed.png";
         try {
             image = ImageIO.read(new File(filepath));
         } catch (IOException e) {
@@ -33,7 +33,7 @@ public class ColorRemover {
             resultImage = removeColors(resultImage, 25);
         }
 
-        String outputpath = "D:\\80_Obrazy\\Shannon_Jungle_Tales\\indexed_01_reduced.png";
+        String outputpath = "/Users/paltho/Pictures/Shannon/shannon_indexed_reduced.png";
         try {
             ImageIO.write(resultImage, "png", new File(outputpath));
         } catch (IOException e) {
@@ -56,10 +56,10 @@ public class ColorRemover {
         for (int h = 0; h < imageWorkedOn.getHeight(); h++) {
             for (int w = 0; w <imageWorkedOn.getWidth(); w++) {
                 int occurance = 0;
-                Color[] colors = new Color[49];
+                Color[] colors = new Color[121];
                 int index = 0;
-                for (int h1 = -3; h1 < 4; h1++) {
-                    for (int w1 = -3; w1 < 4; w1++) {
+                for (int h1 = -5; h1 < 6; h1++) {
+                    for (int w1 = -5; w1 < 6; w1++) {
                         if (h + h1 > -1 && h + h1 < imageWorkedOn.getHeight()
                                 && w + w1 > -1 && w + w1 < imageWorkedOn.getWidth()) {
                             colors[index] = new Color(input.getRGB(w + w1, h + h1));
@@ -69,12 +69,13 @@ public class ColorRemover {
                         index++;
                     }
                 }
-                occurance = Collections.frequency(Arrays.asList(colors), colors[24]);
+                occurance = Collections.frequency(Arrays.asList(colors), colors[60]);
                 if (occurance < pixelsLimit) {
                     Color nearestColor = findNearestColor(colors);
                     imageWorkedOn.setRGB(w, h, new Color(nearestColor.getRed(), nearestColor.getGreen(), nearestColor.getBlue()).getRGB());
                 }
             }
+            System.out.println("line : " + h);
         }
         return imageWorkedOn;
     }

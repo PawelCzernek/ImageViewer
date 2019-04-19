@@ -22,10 +22,11 @@ public class ColorSplitter {
         Map<Color, String> munsellNotations = initMunsellNotations();
         Map<Color, String> munsellPremixed = initMunsellPremixed();
 
-        for (int part = 1 ; part < 9 ; part ++) {
+        for (int part = 2 ; part < 9 ; part ++) {
             notations.append("Part 0" + part + "\r\n");
-            int radius = 10;
-            int pixel_limit = 50;
+
+            int radius = 6; // promien odstepu miedzy kolorami org 10
+            int pixel_limit = 100; //pomija kolory o ilości pikseli poniżej
             final String FILE_PATH = "/Users/paltho/Pictures/Shannon/layers/col_0" + part + ".png";
             final String PODKLAD_PATH = "/Users/paltho/Pictures/Shannon/layers/podkl_0" + part + ".png";
             final String DESTINATION_FOLDER = "/Users/paltho/Pictures/Shannon/layers/0" + part;
@@ -68,6 +69,8 @@ public class ColorSplitter {
                     }
                 }
             }
+
+            //Sortowanie według ilości pikseli
             Map<Color, Long> colorMap = new HashMap<>();
 
             for (Color aColor : uniqueColorList) {
@@ -96,6 +99,8 @@ public class ColorSplitter {
             colorListSorted.addAll(result.keySet());
             Collections.reverse(colorListSorted);
             List<Color> colorsToRemove = new ArrayList<>();
+            // koniec sortowania
+
             while (!colorListSorted.isEmpty()) {
                 currentLayer = deepCopy(podkladCzysty);
                 colorsToRemove.clear();
