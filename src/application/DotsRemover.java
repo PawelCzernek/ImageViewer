@@ -1,7 +1,6 @@
 package application;
 
 import javax.imageio.ImageIO;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -23,7 +22,7 @@ public class DotsRemover {
     public static void main(String[] args) {
 
         //odczytanie pliku
-        String filepath = "D:\\80_Obrazy\\Shannon_Jungle_Tales\\shannon_indexed_reduced.png";
+        String filepath = "/Users/paltho/Pictures/Shannon/shannon_indexed_roboczy.png";
         try {
             image = ImageIO.read(new File(filepath));
         } catch (IOException e) {
@@ -33,7 +32,7 @@ public class DotsRemover {
 
         resultImage = removeColors(resultImage);
 
-        String outputpath = "D:\\80_Obrazy\\Shannon_Jungle_Tales\\shannon_indexed_reduced_2.png";
+        String outputpath = "/Users/paltho/Pictures/Shannon/shannon_indexed_bezkropek.png";
         try {
             ImageIO.write(resultImage, "png", new File(outputpath));
         } catch (IOException e) {

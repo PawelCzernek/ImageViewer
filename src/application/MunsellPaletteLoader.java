@@ -26,7 +26,7 @@ public class MunsellPaletteLoader {
 
         //odczytanie pliku
         for (int i = 5; i < 100 ; i = i + 5) {
-            String filepath = "/Users/paltho/Pictures/Munsell/szablony_do_javy/half_2/" + i + ".png";
+            String filepath = "/Users/paltho/Pictures/Munsell/szablony_do_javy/half_2_done/" + i + ".png";
             try {
                 image = ImageIO.read(new File(filepath));
             } catch (IOException e) {
@@ -46,16 +46,16 @@ public class MunsellPaletteLoader {
 
                     csvContent.append(colorMap.get(w) + ",");
                     csvContent.append(valueMap.get(i) + ",");
-                    csvContent.append(saturationMap.get(h) + ",");
-                    csvContent.append(red + ",");
-                    csvContent.append(green + ",");
-                    csvContent.append(blue + "\r\n");
+                    csvContent.append(saturationMap.get(h) + "\r\n");
+//                    csvContent.append(red + ",");
+//                    csvContent.append(green + ",");
+//                    csvContent.append(blue + "\r\n");
                 }
             }
         }
 
         try {
-            FileWriter writer = new FileWriter("/Users/paltho/Pictures/Munsell/real_sRGB/munsell_gimp_palette.csv");
+            FileWriter writer = new FileWriter("/Users/paltho/Pictures/Munsell/real_sRGB/munsell_gimp_palette_done.csv");
             writer.write(csvContent.toString());
             writer.close();
         } catch (IOException e) {

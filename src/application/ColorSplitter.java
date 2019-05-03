@@ -20,9 +20,10 @@ public class ColorSplitter {
 
         StringBuilder notations = new StringBuilder("Munsell notations: \r\n");
         Map<Color, String> munsellNotations = initMunsellNotations();
-        Map<Color, String> munsellPremixed = initMunsellPremixed();
+        Map<String, Color> munsellNotationsRev = initMunsellNotationsRev(munsellNotations);
+        Map<Color, String> munsellPremixed = initMunsellPremixed(munsellNotationsRev);
 
-        for (int part = 2 ; part < 9 ; part ++) {
+        for (int part = 1 ; part < 9 ; part ++) {
             notations.append("Part 0" + part + "\r\n");
 
             int radius = 6; // promien odstepu miedzy kolorami org 10
@@ -130,6 +131,9 @@ public class ColorSplitter {
                     boolean premixed = munsellPremixed.containsKey(aColor);
                     notations.append(colorCounter + ": " + munsellNotations.get(aColor) + (premixed ? "" : " *") + "\r\n");
                     colorCounter++;
+                    if (munsellNotations.get(aColor) == null) {
+                        System.out.println(aColor);
+                    }
                 }
                 notations.append("\r\n");
                 layerCouner++;
@@ -143,6 +147,12 @@ public class ColorSplitter {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static Map<String,Color> initMunsellNotationsRev(Map<Color, String> munsellNotations) {
+        Map<String,Color> result = new HashMap<>();
+        munsellNotations.entrySet().stream().forEach(entry -> result.put(entry.getValue(), entry.getKey()));
+        return result;
     }
 
     private static Map<Color,String> initMunsellNotations() {
@@ -187,7 +197,7 @@ public class ColorSplitter {
         return result;
     }
 
-    private static Map<Color,String> initMunsellPremixed() {
+    private static Map<Color,String> initMunsellPremixed(Map<String, Color> munsellNotationsRev) {
         Map<Color,String> result = new HashMap<>();
         // -define .csv file in app
         String fileNameDefined = "/Users/paltho/Pictures/Munsell/real_sRGB/munsell_gimp_palette_done.csv";
@@ -206,20 +216,20 @@ public class ColorSplitter {
                 String hue;
                 String value;
                 String chroma;
-                int red;
-                int green;
-                int blue;
+//                int red;
+//                int green;
+//                int blue;
 
                 String[] line = dataLine.split(",");
                 hue = line[0];
                 value = line[1];
                 chroma = line[2];
+                String colorNotation = hue + value + "/" + chroma;
+//                red = Integer.valueOf(line[3]);
+//                green = Integer.valueOf(line[4]);
+//                blue = Integer.valueOf(line[5]);
 
-                red = Integer.valueOf(line[3]);
-                green = Integer.valueOf(line[4]);
-                blue = Integer.valueOf(line[5]);
-
-                result.put(new Color(red, green, blue), hue + value + "/" + chroma);
+                result.put(munsellNotationsRev.get(colorNotation), hue + value + "/" + chroma);
             }
         } catch (FileNotFoundException e) {
 
