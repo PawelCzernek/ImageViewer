@@ -23,10 +23,10 @@ public class ColorSplitter {
         Map<String, Color> munsellNotationsRev = initMunsellNotationsRev(munsellNotations);
         Map<Color, String> munsellPremixed = initMunsellPremixed(munsellNotationsRev);
 
-        for (int part = 1 ; part < 9 ; part ++) {
+        for (int part = 1; part < 9; part++) { //parts - ilość formatek
             notations.append("Part 0" + part + "\r\n");
 
-            int radius = 6; // promien odstepu miedzy kolorami org 10
+            int radius = 15; // promien odstepu miedzy kolorami org 10
             int pixel_limit = 100; //pomija kolory o ilości pikseli poniżej
             final String FILE_PATH = "/Users/paltho/Pictures/Shannon/layers/col_0" + part + ".png";
             final String PODKLAD_PATH = "/Users/paltho/Pictures/Shannon/layers/podkl_0" + part + ".png";
@@ -71,7 +71,7 @@ public class ColorSplitter {
                 }
             }
 
-            //Sortowanie według ilości pikseli
+            //Sortowanie według ilości pikseli (z
             Map<Color, Long> colorMap = new HashMap<>();
 
             for (Color aColor : uniqueColorList) {
@@ -85,10 +85,20 @@ public class ColorSplitter {
                     }
                 }
                 colorMap.put(aColor, occurance);
-                System.out.println(aColor.toString());
+                //System.out.println(aColor.toString());
             }
+
             List<Map.Entry<Color, Long>> list = new ArrayList<>(colorMap.entrySet());
-            list.sort(Map.Entry.comparingByValue());
+
+//            list.sort(Map.Entry.comparingByValue()); //sortowanie po ilości wystąpień
+            list.sort(Map.Entry.comparingByKey(new Comparator<Color>() {
+                @Override
+                public int compare(Color o1, Color o2) {
+                    Double o1Luminance = (0.22 * o1.getRed()) + (0.72 * o1.getGreen()) + (0.06 * o1.getBlue());
+                    Double o2Luminance = (0.22 * o2.getRed()) + (0.72 * o2.getGreen()) + (0.06 * o2.getBlue());
+                    return o1Luminance.compareTo(o2Luminance);
+                }
+            })); //sortowanie po jasności
 
             Map<Color, Long> result = new LinkedHashMap<>();
             for (Map.Entry<Color, Long> entry : list) {
@@ -125,7 +135,7 @@ public class ColorSplitter {
 
                 colorListSorted.removeAll(colorsToRemove);
                 //saving notations
-                notations.append("layer : "+ layerCouner + "\r\n");
+                notations.append("layer : " + layerCouner + "\r\n");
                 int colorCounter = 1;
                 for (Color aColor : colorsToRemove) {
                     boolean premixed = munsellPremixed.containsKey(aColor);
@@ -149,25 +159,25 @@ public class ColorSplitter {
         }
     }
 
-    private static Map<String,Color> initMunsellNotationsRev(Map<Color, String> munsellNotations) {
-        Map<String,Color> result = new HashMap<>();
+    private static Map<String, Color> initMunsellNotationsRev(Map<Color, String> munsellNotations) {
+        Map<String, Color> result = new HashMap<>();
         munsellNotations.entrySet().stream().forEach(entry -> result.put(entry.getValue(), entry.getKey()));
         return result;
     }
 
-    private static Map<Color,String> initMunsellNotations() {
-        Map<Color,String> result = new HashMap<>();
+    private static Map<Color, String> initMunsellNotations() {
+        Map<Color, String> result = new HashMap<>();
         // -define .csv file in app
         String fileNameDefined = "/Users/paltho/Pictures/Munsell/real_sRGB/munsell_gimp_palette.csv";
         // -File class needed to turn stringName to actual file
         File file = new File(fileNameDefined);
 
-        try{
+        try {
             // -read from filePooped with Scanner class
             Scanner inputStream = new Scanner(file);
             // hashNext() loops line-by-line
             int licznik = 1;
-            while(inputStream.hasNextLine()) {
+            while (inputStream.hasNextLine()) {
                 //read single line, put in string
                 String dataLine = inputStream.nextLine();
 
@@ -197,19 +207,19 @@ public class ColorSplitter {
         return result;
     }
 
-    private static Map<Color,String> initMunsellPremixed(Map<String, Color> munsellNotationsRev) {
-        Map<Color,String> result = new HashMap<>();
+    private static Map<Color, String> initMunsellPremixed(Map<String, Color> munsellNotationsRev) {
+        Map<Color, String> result = new HashMap<>();
         // -define .csv file in app
         String fileNameDefined = "/Users/paltho/Pictures/Munsell/real_sRGB/munsell_gimp_palette_done.csv";
         // -File class needed to turn stringName to actual file
         File file = new File(fileNameDefined);
 
-        try{
+        try {
             // -read from filePooped with Scanner class
             Scanner inputStream = new Scanner(file);
             // hashNext() loops line-by-line
             int licznik = 1;
-            while(inputStream.hasNextLine()) {
+            while (inputStream.hasNextLine()) {
                 //read single line, put in string
                 String dataLine = inputStream.nextLine();
 
@@ -245,11 +255,11 @@ public class ColorSplitter {
                 Color localColor = new Color(image.getRGB(w, h));
                 if (aColor.equals(localColor)) {
                     for (int h1 = h - radius; h1 < h + radius; h1++) {
-                      for (int w1 = w - radius; w1 < w + radius; w1++) {
-                          if (currentLayer.getRGB(roundW1(w1, currentLayer), roundH1(h1, currentLayer)) != Color.WHITE.getRGB()) {
-                              return false;
-                          }
-                      }
+                        for (int w1 = w - radius; w1 < w + radius; w1++) {
+                            if (currentLayer.getRGB(roundW1(w1, currentLayer), roundH1(h1, currentLayer)) != Color.WHITE.getRGB()) {
+                                return false;
+                            }
+                        }
                     }
                 }
             }

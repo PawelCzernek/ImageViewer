@@ -28,9 +28,9 @@ public class ColorRemover {
         }
         BufferedImage resultImage = image;
 
-        for (int i = 1; i < 2; i++) {
+        for (int i = 1; i < 2; i++) { //1 przebieg
             System.out.println("Przebieg: " + i);
-            resultImage = removeColors(resultImage, 25);
+            resultImage = removeColors(resultImage, 25); //wygładzanie 25 ze 121 pikseli
         }
 
         String outputpath = "/Users/paltho/Pictures/Shannon/shannon_indexed_reduced.png";
