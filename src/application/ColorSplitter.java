@@ -18,19 +18,24 @@ public class ColorSplitter {
 
     public static void main(String[] args) {
 
-        StringBuilder notations = new StringBuilder("Munsell notations: \r\n");
-        Map<Color, String> munsellNotations = initMunsellNotations();
-        Map<String, Color> munsellNotationsRev = initMunsellNotationsRev(munsellNotations);
-        Map<Color, String> munsellPremixed = initMunsellPremixed(munsellNotationsRev);
 
-        for (int part = 1; part < 9; part++) { //parts - ilość formatek
+        StringBuilder notations = new StringBuilder("Munsell notations: \r\n");
+//        Map<Color, String> munsellNotations = initMunsellNotations();
+//        Map<String, Color> munsellNotationsRev = initMunsellNotationsRev(munsellNotations);
+//        Map<Color, String> munsellPremixed = initMunsellPremixed(munsellNotationsRev);
+
+        final String FOLDER_PATH = "C:\\Users\\Precision\\Pictures\\Thrayer\\Roses\\layers\\";
+
+        for (int part = 1; part < 3; part++) { //parts - ilość formatek
             notations.append("Part 0" + part + "\r\n");
 
-            int radius = 15; // promien odstepu miedzy kolorami org 10
+//            final String FOLDER_PATH = "/Users/paltho/Pictures/Shannon/layers/";
+
+            int radius = 10; // promien odstepu miedzy kolorami org 10
             int pixel_limit = 100; //pomija kolory o ilości pikseli poniżej
-            final String FILE_PATH = "/Users/paltho/Pictures/Shannon/layers/col_0" + part + ".png";
-            final String PODKLAD_PATH = "/Users/paltho/Pictures/Shannon/layers/podkl_0" + part + ".png";
-            final String DESTINATION_FOLDER = "/Users/paltho/Pictures/Shannon/layers/0" + part;
+            final String FILE_PATH = FOLDER_PATH + "col_0" + part + ".png";
+            final String PODKLAD_PATH = FOLDER_PATH + "podkl_0" + part + ".png";
+            final String DESTINATION_FOLDER = FOLDER_PATH + "0" + part;
             final String DESTINATION_PATH = DESTINATION_FOLDER + "/";
             final String FILE_PREFIX = "indexed_0" + part + "_layer";
             final String FILE_EXT = ".png";
@@ -137,21 +142,21 @@ public class ColorSplitter {
                 //saving notations
                 notations.append("layer : " + layerCouner + "\r\n");
                 int colorCounter = 1;
-                for (Color aColor : colorsToRemove) {
-                    boolean premixed = munsellPremixed.containsKey(aColor);
-                    notations.append(colorCounter + ": " + munsellNotations.get(aColor) + (premixed ? "" : " *") + "\r\n");
-                    colorCounter++;
-                    if (munsellNotations.get(aColor) == null) {
-                        System.out.println(aColor);
-                    }
-                }
+//                for (Color aColor : colorsToRemove) {
+//                    boolean premixed = munsellPremixed.containsKey(aColor);
+//                    notations.append(colorCounter + ": " + munsellNotations.get(aColor) + (premixed ? "" : " *") + "\r\n");
+//                    colorCounter++;
+//                    if (munsellNotations.get(aColor) == null) {
+//                        System.out.println(aColor);
+//                    }
+//                }
                 notations.append("\r\n");
                 layerCouner++;
             }
         }
 
         try {
-            FileWriter writer = new FileWriter("/Users/paltho/Pictures/Shannon/layers/munsell_notations.csv");
+            FileWriter writer = new FileWriter(FOLDER_PATH + "munsell_notations.csv");
             writer.write(notations.toString());
             writer.close();
         } catch (IOException e) {
