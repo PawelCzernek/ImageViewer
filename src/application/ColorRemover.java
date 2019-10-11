@@ -20,7 +20,7 @@ public class ColorRemover {
     public static void main(String[] args) {
 
         //odczytanie pliku
-        String filepath = "C:\\Users\\Precision\\Pictures\\Thrayer\\Roses\\roses_indexed1.png";
+        String filepath = "/Users/paltho/Pictures/Thayer/lilies_2/lilies_2.png";
         try {
             image = ImageIO.read(new File(filepath));
         } catch (IOException e) {
@@ -33,7 +33,7 @@ public class ColorRemover {
             resultImage = removeColors(resultImage, 60); //wygładzanie 25 ze 121 pikseli
         }
 
-        String outputpath = "C:\\Users\\Precision\\Pictures\\Thrayer\\Roses\\roses_indexed_reduced1.png";
+        String outputpath = "/Users/paltho/Pictures/Thayer/lilies_2/lilies_2_reduced.png";
         try {
             ImageIO.write(resultImage, "png", new File(outputpath));
         } catch (IOException e) {

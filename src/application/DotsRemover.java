@@ -22,7 +22,7 @@ public class DotsRemover {
     public static void main(String[] args) {
 
         //odczytanie pliku
-        String filepath = "C:\\Users\\Precision\\Pictures\\Thrayer\\Roses\\roses_indexed.png";
+        String filepath = "/Users/paltho/Pictures/Thayer/layers/col_01.png";
         try {
             image = ImageIO.read(new File(filepath));
         } catch (IOException e) {
@@ -30,11 +30,9 @@ public class DotsRemover {
         }
         BufferedImage resultImage = image;
 
-        for (int i = 0; i < 6; i++) {
-            resultImage = removeColors(resultImage);
-        }
+        resultImage = removeColors(resultImage);
 
-        String outputpath = "C:\\Users\\Precision\\Pictures\\Thrayer\\Roses\\roses_indexed_bezkropek.png";
+        String outputpath = "/Users/paltho/Pictures/Thayer/layers/col_01_result.png";
         try {
             ImageIO.write(resultImage, "png", new File(outputpath));
         } catch (IOException e) {
